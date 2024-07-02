@@ -2,7 +2,7 @@ module vom
 
 // Based on https://docs.rs/nom/7.1.3/nom/branch/index.html
 
-// Tests a list of `parsers` one by one until one succeeds.
+// alt tests a list of `parsers` one by one until one succeeds.
 pub fn alt(parsers []Fn) Fn {
 	return fn [parsers] (input string) !(string, string, int) {
 		for parser in parsers {
@@ -13,8 +13,8 @@ pub fn alt(parsers []Fn) Fn {
 	}
 }
 
-// Applies a list of `parsers` in any order.
-// Permutation will succeed if all of the child `parsers` succeeded. It takes as argument a tuple of `parsers`, and returns a tuple of the parser results.
+// permutation applies a list of `parsers` in any order.
+// permutation will succeed if all of the child `parsers` succeeded. It takes as argument a tuple of `parsers`, and returns a tuple of the parser results.
 pub fn permutation(parsers []Fn) FnMany {
 	return fn [parsers] (input string) !(string, []string, int) {
 		for perm in quick_perm(parsers.len) {
@@ -32,7 +32,7 @@ pub fn permutation(parsers []Fn) FnMany {
 	}
 }
 
-// Returns an array of index permutations up to index n. Inspired by
+// quick_perm returns an array of index permutations up to index n. Inspired by
 // https://www.quickperm.org/01example.php
 fn quick_perm(n int) [][]int {
 	mut a := []int{len: n, init: index}

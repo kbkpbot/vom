@@ -2,7 +2,7 @@ module vom
 
 // Based on https://docs.rs/nom/7.1.3/nom/multi/index.html
 
-// Runs the embedded parser a specified number of times.
+// count runs the embedded parser `f` a specified number `count` of times.
 pub fn count(f Fn, count int) FnMany {
 	return fn [f, count] (input string) !(string, []string, int) {
 		mut temp := input
@@ -18,7 +18,7 @@ pub fn count(f Fn, count int) FnMany {
 	}
 }
 
-// Runs the embedded parser repeatedly, filling the given slice with results.
+// fill runs the embedded parser `f` repeatedly, filling the given slice `buf` with results.
 pub fn fill(f Fn, mut buf []string) FnMany {
 	return fn [f, mut buf] (input string) !(string, []string, int) {
 		mut temp := input
@@ -32,7 +32,7 @@ pub fn fill(f Fn, mut buf []string) FnMany {
 	}
 }
 
-// Repeats the embedded parser `f`, calling `g` to gather the results.
+// fold_many0 repeats the embedded parser `f`, calling `init` to init, and calling `g` to gather the results.
 pub fn fold_many0(f Fn, init fn () []string, g fn (string, mut []string)) FnMany {
 	return fn [f, init, g] (input string) !(string, []string, int) {
 		mut y := init()
@@ -52,7 +52,7 @@ pub fn fold_many0(f Fn, init fn () []string, g fn (string, mut []string)) FnMany
 	}
 }
 
-// Repeats the embedded parser `f`, calling `g` to gather the results.
+// fold_many1 repeats the embedded parser `f` at least one time, calling `init` to init, and calling `g` to gather the results.
 pub fn fold_many1(f Fn, init fn () []string, g fn (string, mut []string)) FnMany {
 	return fn [f, init, g] (input string) !(string, []string, int) {
 		mut y := init()
@@ -78,7 +78,7 @@ pub fn fold_many1(f Fn, init fn () []string, g fn (string, mut []string)) FnMany
 	}
 }
 
-// Repeats the embedded parser `f` `m`..=`n` times, calling `g` to gather the results
+// fold_many_m_n repeats the embedded parser `f` `m`..=`n` times, calling `init` to init, and calling `g` to gather the results.
 pub fn fold_many_m_n(m usize, n usize, f Fn, init fn () []string, g fn (string, mut []string)) FnMany {
 	return fn [m, n, f, init, g] (input string) !(string, []string, int) {
 		mut y := init()
@@ -111,7 +111,7 @@ pub fn fold_many_m_n(m usize, n usize, f Fn, init fn () []string, g fn (string, 
 	}
 }
 
-// Gets a number from the first parser `f`, then applies the second parser `g` that many times.
+// length_count gets a number from the first parser `f`, then applies the second parser `g` that many times.
 pub fn length_count(f Fn, g Fn) FnMany {
 	return fn [f, g] (input string) !(string, []string, int) {
 		a, b, len1 := f(input)!
@@ -130,7 +130,7 @@ pub fn length_count(f Fn, g Fn) FnMany {
 	}
 }
 
-// Repeats the embedded parser `f`, gathering the results in a []string.
+// many0 repeats the embedded parser `f`, gathering the results in a []string.
 pub fn many0(f Fn) FnMany {
 	return fn [f] (input string) !(string, []string, int) {
 		mut a := input
@@ -148,7 +148,7 @@ pub fn many0(f Fn) FnMany {
 	}
 }
 
-// Repeats the embedded parser `f`, counting the results
+// many0_count repeats the embedded parser `f`, counting the results
 pub fn many0_count(f Fn) FnCount {
 	return fn [f] (input string) !(string, usize, int) {
 		mut a := input
@@ -165,7 +165,7 @@ pub fn many0_count(f Fn) FnCount {
 	}
 }
 
-// Repeats the embedded parser `f`, gathering the results in a []string.
+// many1 repeats the embedded parser `f`, gathering the results in a []string.
 pub fn many1(f Fn) FnMany {
 	return fn [f] (input string) !(string, []string, int) {
 		mut a := input
@@ -187,7 +187,7 @@ pub fn many1(f Fn) FnMany {
 	}
 }
 
-// Repeats the embedded parser `f`, counting the results
+// many1_count repeats the embedded parser `f`, counting the results
 pub fn many1_count(f Fn) FnCount {
 	return fn [f] (input string) !(string, usize, int) {
 		mut a := input
@@ -208,7 +208,7 @@ pub fn many1_count(f Fn) FnCount {
 	}
 }
 
-// Repeats the embedded parser `f` m..=n times
+// many_m_n repeats the embedded parser `f` `m`..=`n` times
 pub fn many_m_n(m usize, n usize, f Fn) FnMany {
 	return fn [m, n, f] (input string) !(string, []string, int) {
 		mut a := input
@@ -240,7 +240,7 @@ pub fn many_m_n(m usize, n usize, f Fn) FnMany {
 	}
 }
 
-// Applies the parser `f` until the parser `g` produces a result.
+// many_till applies the parser `f` until the parser `g` produces a result.
 pub fn many_till(f Fn, g Fn) FnResult {
 	return fn [f, g] (input string) !(string, []string, string, int) {
 		mut a := input
@@ -266,7 +266,7 @@ pub fn many_till(f Fn, g Fn) FnResult {
 	}
 }
 
-// Alternates between two parsers to produce a list of elements.
+// separated_list0 alternates between two parsers to produce a list of elements.
 // `sep` Parses the separator between list elements.
 // `f` Parses the elements of the list.
 pub fn separated_list0(sep Fn, f Fn) FnMany {
@@ -295,7 +295,7 @@ pub fn separated_list0(sep Fn, f Fn) FnMany {
 	}
 }
 
-// Alternates between two parsers to produce a list of elements.
+// separated_list1 alternates between two parsers to produce a list of elements.
 // `sep` Parses the separator between list elements.
 // `f` Parses the elements of the list.
 pub fn separated_list1(sep Fn, f Fn) FnMany {

@@ -2,7 +2,7 @@ module vom
 
 // Based on https://docs.rs/nom/7.1.3/nom/bytes/complete/index.html
 
-// Matches a byte string with escaped characters.
+// escaped matches a byte string with escaped characters.
 // The first argument matches the `normal` characters (it must not accept the control character)
 // The second argument is the `control_char` (like \ in most languages)
 // The third argument matches the escaped characters
@@ -22,7 +22,7 @@ pub fn escaped(normal Fn, control_char rune, escapable Fn) Fn {
 	}
 }
 
-// Returns the longest slice that matches any character in the `pattern`.
+// is_a returns the longest slice that matches any character in the `pattern`.
 pub fn is_a(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		for i, c in input {
@@ -34,7 +34,7 @@ pub fn is_a(pattern string) Fn {
 	}
 }
 
-// Parse till certain characters are met.
+// is_not parse till any character in `pattern` is met.
 pub fn is_not(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		for i, c in input {
@@ -46,7 +46,7 @@ pub fn is_not(pattern string) Fn {
 	}
 }
 
-// Recognizes a `pattern`.
+// tag recognizes a `pattern`.
 pub fn tag(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		if input.len < pattern.len {
@@ -60,7 +60,7 @@ pub fn tag(pattern string) Fn {
 	}
 }
 
-// Recognizes a case insensitive `pattern`.
+// tag_no_case recognizes a case insensitive `pattern`.
 pub fn tag_no_case(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		if input.len < pattern.len {
@@ -74,7 +74,7 @@ pub fn tag_no_case(pattern string) Fn {
 	}
 }
 
-// Returns an input slice containing the first `n` input elements (Input[..`n`]).
+// take returns an input slice containing the first `n` input elements (input[..`n`]).
 pub fn take(n int) Fn {
 	return fn [n] (input string) !(string, string, int) {
 		if input.len < n {
@@ -85,7 +85,7 @@ pub fn take(n int) Fn {
 	}
 }
 
-// Returns the longest input slice (if any) till a predicate `condition` is met.
+// take_till returns the longest input slice (if any) till a predicate `condition` is met.
 pub fn take_till(condition fn (u8) bool) Fn {
 	return fn [condition] (input string) !(string, string, int) {
 		for i, c in input.bytes() {
@@ -97,7 +97,7 @@ pub fn take_till(condition fn (u8) bool) Fn {
 	}
 }
 
-// Returns the longest (at least 1) input slice till a predicate `condition` is met.
+// take_till1 returns the longest (at least 1) input slice till a predicate `condition` is met.
 pub fn take_till1(condition fn (u8) bool) Fn {
 	return fn [condition] (input string) !(string, string, int) {
 		for i, c in input.bytes() {
@@ -109,7 +109,7 @@ pub fn take_till1(condition fn (u8) bool) Fn {
 	}
 }
 
-// Returns the input slice up to the first occurrence of the `pattern`.
+// take_until returns the input slice up to the first occurrence of the `pattern`.
 pub fn take_until(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		for i := 0; i + pattern.len <= input.len; i++ {
@@ -121,7 +121,7 @@ pub fn take_until(pattern string) Fn {
 	}
 }
 
-// Returns the non empty input slice up to the first occurrence of the `pattern`.
+// take_until1 returns the non empty input slice up to the first occurrence of the `pattern`.
 pub fn take_until1(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		for i := 1; i + pattern.len <= input.len; i++ {
@@ -133,7 +133,7 @@ pub fn take_until1(pattern string) Fn {
 	}
 }
 
-// Returns the longest input slice (if any) that matches the predicate `condition`.
+// take_while returns the longest input slice (if any) that matches the predicate `condition`.
 pub fn take_while(condition fn (u8) bool) Fn {
 	return fn [condition] (input string) !(string, string, int) {
 		for i, c in input.bytes() {
@@ -145,7 +145,7 @@ pub fn take_while(condition fn (u8) bool) Fn {
 	}
 }
 
-// Returns the longest (at least 1) input slice that matches the predicate `condition`.
+// take_while1 returns the longest (at least 1) input slice that matches the predicate `condition`.
 pub fn take_while1(condition fn (u8) bool) Fn {
 	return fn [condition] (input string) !(string, string, int) {
 		for i, c in input.bytes() {
@@ -160,7 +160,7 @@ pub fn take_while1(condition fn (u8) bool) Fn {
 	}
 }
 
-// Returns the longest (m <= len <= n) input slice that matches the predicate `condition`.
+// take_while_m_n returns the longest (m <= len <= n) input slice that matches the predicate `condition`.
 pub fn take_while_m_n(m int, n int, condition fn (u8) bool) Fn {
 	return fn [m, n, condition] (input string) !(string, string, int) {
 		mut longest := -1

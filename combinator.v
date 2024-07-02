@@ -2,7 +2,7 @@ module vom
 
 // Based on https://docs.rs/nom/7.1.3/nom/combinator/index.html
 
-// Succeeds if all the input has been consumed by its child parser.
+// all_consuming succeeds if all the input has been consumed by its child parser `f`.
 pub fn all_consuming(f Fn) Fn {
 	return fn [f] (input string) !(string, string, int) {
 		rest, output, len := f(input)!
@@ -14,7 +14,7 @@ pub fn all_consuming(f Fn) Fn {
 	}
 }
 
-// Calls the parser if the condition is met.
+// cond calls the parser `f` if the condition `b` is true.
 pub fn cond(b bool, f Fn) Fn {
 	return fn [b, f] (input string) !(string, string, int) {
 		if b {
@@ -25,7 +25,7 @@ pub fn cond(b bool, f Fn) Fn {
 	}
 }
 
-// Returns its input if it is at the end of input data
+// eof returns its input if it is at the end of input data
 pub fn eof(input string) !(string, string, int) {
 	if input.len == 0 {
 		return input, input, 0
@@ -34,13 +34,13 @@ pub fn eof(input string) !(string, string, int) {
 	}
 }
 
-// A parser which always fails.
+// fail return fail.
 pub fn fail(input string) !(string, string, int) {
 	return error('`fail` failed')
 }
 
 /*
-// Creates a new parser from the output of the first parser, then apply that parser over the rest of the input.
+// flat_map creates a new parser from the output of the first parser, then apply that parser over the rest of the input.
 pub fn flat_map(parser Fn, applied_parser Fn) Fn {
         return fn [parser, applied_parser] (input string) !(string, string) {
                 _, a := parser(input) !
@@ -49,7 +49,7 @@ pub fn flat_map(parser Fn, applied_parser Fn) Fn {
 }
 */
 
-// Succeeds if the child parser returns an error.
+// not succeeds if the child parser `f` returns an error.
 pub fn not(f Fn) Fn {
 	return fn [f] (input string) !(string, string, int) {
 		f(input) or { return input, '', 0 }
@@ -57,7 +57,7 @@ pub fn not(f Fn) Fn {
 	}
 }
 
-// Optional parser: Will return '' if not successful.
+// opt Optional parser: Will return '' if not successful.
 pub fn opt(f Fn) Fn {
 	return fn [f] (input string) !(string, string, int) {
 		rest, output, len := f(input) or { return input, '', 0 }
@@ -65,7 +65,7 @@ pub fn opt(f Fn) Fn {
 	}
 }
 
-// Tries to apply its parser without consuming the input.
+// peek tries to apply its parser `f` without consuming the input.
 pub fn peek(f Fn) Fn {
 	return fn [f] (input string) !(string, string, int) {
 		_, output, len := f(input)!
@@ -73,7 +73,7 @@ pub fn peek(f Fn) Fn {
 	}
 }
 
-// If the child parser was successful, return the consumed input as produced value.
+// recognize if the child parser `f` was successful, return the consumed input as produced value.
 pub fn recognize(f Parser) Fn {
 	parsers := [f]
 	return fn [parsers] (input string) !(string, string, int) {
@@ -97,7 +97,7 @@ pub fn recognize(f Parser) Fn {
 	}
 }
 
-// Returns the provided value if the child parser succeeds.
+// value returns the provided value `val` if the child parser `f` succeeds.
 pub fn value[T](val T, f Fn) fn (string) !T {
 	return fn [val, f] [T](input string) !T {
 		f(input) or { return error('`value` fail') }
@@ -105,8 +105,8 @@ pub fn value[T](val T, f Fn) fn (string) !T {
 	}
 }
 
-// Returns the result of the child parser if it satisfies a verification function.
-// The verification function takes as argument a reference to the output of the parser.
+// verify returns the result of the child parser `first` if it satisfies a verification function `second`.
+// The verification function `second` takes as argument a reference to the output of the parser `first`.
 pub fn verify(first Fn, second fn (string) bool) fn (string) !string {
 	return fn [first, second] (input string) !string {
 		_, output, _ := first(input) or { return error('`verify` fail') }

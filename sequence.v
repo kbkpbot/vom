@@ -2,8 +2,8 @@ module vom
 
 // Based on https://docs.rs/nom/7.1.3/nom/sequence/index.html
 
-// Matches an object from the first parser and discards it, then gets an object
-// from the second parser, and finally matches an object from the third parser and
+// delimited matches an object from the `first` parser and discards it, then gets an object
+// from the `second` parser, and finally matches an object from the `third` parser and
 // discards it.
 pub fn delimited(first Fn, second Fn, third Fn) Fn {
 	return fn [first, second, third] (input string) !(string, string, int) {
@@ -14,7 +14,7 @@ pub fn delimited(first Fn, second Fn, third Fn) Fn {
 	}
 }
 
-// Gets an object from the first parser, then gets another object from the second parser.
+// pair gets an object from the `first` parser, then gets another object from the `second` parser.
 pub fn pair(first Fn, second Fn) FnMany {
 	return fn [first, second] (input string) !(string, []string, int) {
 		a, b, len1 := first(input)!
@@ -23,8 +23,8 @@ pub fn pair(first Fn, second Fn) FnMany {
 	}
 }
 
-// Matches an object from the first parser and discards it, then gets an object
-// from the second parser.
+// preceded matches an object from the `first` parser and discards it, then gets an object
+// from the `second` parser.
 pub fn preceded(first Fn, second Fn) Fn {
 	parsers := [first, second]
 	return fn [parsers] (input string) !(string, string, int) {
@@ -35,8 +35,8 @@ pub fn preceded(first Fn, second Fn) Fn {
 	}
 }
 
-// Gets an object from the first parser, then matches an object from the sep_parser
-// and discards it, then gets another object from the second parser.
+// separated_pair gets an object from the `first` parser, then matches an object from the `sep` parser
+// and discards it, then gets another object from the `second` parser.
 pub fn separated_pair(first Fn, sep Fn, second Fn) FnMany {
 	return fn [first, sep, second] (input string) !(string, []string, int) {
 		mut output := []string{}
@@ -49,7 +49,7 @@ pub fn separated_pair(first Fn, sep Fn, second Fn) FnMany {
 	}
 }
 
-// Gets an object from the first parser, then matches an object from the second
+// terminated gets an object from the `first` parser, then matches an object from the `second`
 // parser and discards it.
 pub fn terminated(first Fn, second Fn) Fn {
 	return fn [first, second] (input string) !(string, string, int) {
@@ -59,7 +59,7 @@ pub fn terminated(first Fn, second Fn) Fn {
 	}
 }
 
-// Applies a tuple of parsers one by one and returns their results as a tuple.
+// tuple applies a tuple of `parsers` one by one and returns their results as a tuple.
 pub fn tuple(parsers []Fn) FnMany {
 	return fn [parsers] (input string) !(string, []string, int) {
 		mut temp := input
@@ -75,7 +75,7 @@ pub fn tuple(parsers []Fn) FnMany {
 	}
 }
 
-// Applies a tuple of parsers one by one and returns their results as a string.
+// concat applies a tuple of `parsers` one by one and returns their results as a string.
 pub fn concat(parsers []Fn) Fn {
 	return fn [parsers] (input string) !(string, string, int) {
 		parser := tuple(parsers)

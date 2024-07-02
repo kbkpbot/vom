@@ -2,110 +2,110 @@ module vom
 
 // Based on https://docs.rs/nom/7.1.3/nom/character/index.html
 
-// Tests if u8 is ASCII alphabetic: A-Z, a-z.
+// is_alphabetic tests if u8 `b` is ASCII alphabetic: A-Z, a-z.
 pub fn is_alphabetic(b u8) bool {
 	return 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.bytes().any(it == b)
 }
 
-// Tests if u8 is ASCII alphanumeric: A-Z, a-z, 0-9.
+// is_alphanumeric tests if u8 `b` is ASCII alphanumeric: A-Z, a-z, 0-9.
 pub fn is_alphanumeric(b u8) bool {
 	return is_alphabetic(b) || is_digit(b)
 }
 
-// Tests if u8 is ASCII digit: 0-9.
+// is_digit tests if u8 `b` is ASCII digit: 0-9.
 pub fn is_digit(b u8) bool {
 	return '0123456789'.bytes().any(it == b)
 }
 
-// Tests if u8 is ASCII hex digit: 0-9, A-F, a-f.
+// is_digit tests if u8 `b` is ASCII hex digit: 0-9, A-F, a-f.
 pub fn is_hex_digit(b u8) bool {
 	return is_digit(b) || 'ABCDEF'.bytes().any(it == b) || 'abcdef'.bytes().any(it == b)
 }
 
-// Tests if u8 is ASCII newline: \n.
+// is_newline tests if u8 `b` is ASCII newline: \n.
 pub fn is_newline(b u8) bool {
 	return b == `\n`
 }
 
-// Tests if u8 is ASCII octal digit: 0-7.
+// is_oct_digit tests if u8 `b` is ASCII octal digit: 0-7.
 pub fn is_oct_digit(b u8) bool {
 	return '01234567'.bytes().any(it == b)
 }
 
-// Tests if u8 is ASCII space or tab.
+// is_space tests if u8 `b` is ASCII space or tab.
 pub fn is_space(b u8) bool {
 	return ' \t'.bytes().any(it == b)
 }
 
 // Based on https://docs.rs/nom/7.1.3/nom/character/complete/index.html
 
-// Recognizes zero or more lowercase and uppercase ASCII alphabetic characters: a-z, A-Z
+// alpha0 recognizes zero or more lowercase and uppercase ASCII alphabetic characters: a-z, A-Z
 pub fn alpha0(input string) !(string, string, int) {
 	parser := take_while(is_alphabetic)
 	return parser(input)
 }
 
-// Recognizes one or more lowercase and uppercase ASCII alphabetic characters: a-z, A-Z
+// alpha1 recognizes one or more lowercase and uppercase ASCII alphabetic characters: a-z, A-Z
 pub fn alpha1(input string) !(string, string, int) {
 	parser := take_while1(is_alphabetic)
 	return parser(input)
 }
 
-// Recognizes zero or more ASCII numerical and alphabetic characters: 0-9, a-z, A-Z
+// alphanumeric0 recognizes zero or more ASCII numerical and alphabetic characters: 0-9, a-z, A-Z
 pub fn alphanumeric0(input string) !(string, string, int) {
 	parser := take_while(is_alphanumeric)
 	return parser(input)
 }
 
-// Recognizes one or more ASCII numerical and alphabetic characters: 0-9, a-z, A-Z
+// alphanumeric1 recognizes one or more ASCII numerical and alphabetic characters: 0-9, a-z, A-Z
 pub fn alphanumeric1(input string) !(string, string, int) {
 	parser := take_while1(is_alphanumeric)
 	return parser(input)
 }
 
-// Recognizes one letter.
+// character recognizes one letter.
 pub fn character(input string) !(string, string, int) {
 	parser := take_while_m_n(1, 1, is_alphabetic)
 	return parser(input)
 }
 
-// Recognizes the string '\r\n'.
+// crlf recognizes the string '\r\n'.
 pub fn crlf(input string) !(string, string, int) {
 	parser := tag('\r\n')
 	return parser(input)
 }
 
-// Recognizes zero or more ASCII numerical characters: 0-9
+// digit0 recognizes zero or more ASCII numerical characters: 0-9
 pub fn digit0(input string) !(string, string, int) {
 	parser := take_while(is_digit)
 	return parser(input)
 }
 
-// Recognizes one or more ASCII numerical characters: 0-9
+// digit1 recognizes one or more ASCII numerical characters: 0-9
 pub fn digit1(input string) !(string, string, int) {
 	parser := take_while1(is_digit)
 	return parser(input)
 }
 
-// Recognizes zero or more ASCII hexadecimal numerical characters: 0-9, A-F, a-f
+// hex_digit0 recognizes zero or more ASCII hexadecimal numerical characters: 0-9, A-F, a-f
 pub fn hex_digit0(input string) !(string, string, int) {
 	parser := take_while(is_hex_digit)
 	return parser(input)
 }
 
-// Recognizes one or more ASCII hexadecimal numerical characters: 0-9, A-F, a-f
+// hex_digit1 recognizes one or more ASCII hexadecimal numerical characters: 0-9, A-F, a-f
 pub fn hex_digit1(input string) !(string, string, int) {
 	parser := take_while1(is_hex_digit)
 	return parser(input)
 }
 
-// Recognizes an end of line (both '\n' and '\r\n').
+// line_ending recognizes an end of line (both '\n' and '\r\n').
 pub fn line_ending(input string) !(string, string, int) {
 	parser := alt([tag('\n'), tag('\r\n')])
 	return parser(input)
 }
 
-// Recognizes zero or more spaces, tabs, carriage returns and line feeds.
+// multispace0 recognizes zero or more spaces, tabs, carriage returns and line feeds.
 pub fn multispace0(input string) !(string, string, int) {
 	parser := take_while(fn (b u8) bool {
 		return ' \t\n\r'.bytes().any(it == b)
@@ -113,7 +113,7 @@ pub fn multispace0(input string) !(string, string, int) {
 	return parser(input)
 }
 
-// Recognizes one or more spaces, tabs, carriage returns and line feeds.
+// multispace1 recognizes one or more spaces, tabs, carriage returns and line feeds.
 pub fn multispace1(input string) !(string, string, int) {
 	parser := take_while1(fn (b u8) bool {
 		return ' \t\n\r'.bytes().any(it == b)
@@ -121,13 +121,13 @@ pub fn multispace1(input string) !(string, string, int) {
 	return parser(input)
 }
 
-// Matches a newline character '\n'
+// newline matches a newline character '\n'
 pub fn newline(input string) !(string, string, int) {
 	parser := tag('\n')
 	return parser(input)
 }
 
-// Recognizes a character that is not in the provided characters.
+// none_of recognizes a character that is not in the provided `pattern`.
 pub fn none_of(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		if input.len == 0 {
@@ -141,7 +141,7 @@ pub fn none_of(pattern string) Fn {
 	}
 }
 
-// Recognizes a string of any char except '\r\n' or '\n'.
+// not_line_ending recognizes a string of any char except '\r\n' or '\n'.
 pub fn not_line_ending(input string) !(string, string, int) {
 	parser := take_while(fn (b u8) bool {
 		return '\r\n'.bytes().all(it != b)
@@ -149,19 +149,19 @@ pub fn not_line_ending(input string) !(string, string, int) {
 	return parser(input)
 }
 
-// Recognizes zero or more octal characters: 0-7
+// oct_digit0 recognizes zero or more octal characters: 0-7
 pub fn oct_digit0(input string) !(string, string, int) {
 	parser := take_while(is_oct_digit)
 	return parser(input)
 }
 
-// Recognizes one or more octal characters: 0-7
+// oct_digit1 recognizes one or more octal characters: 0-7
 pub fn oct_digit1(input string) !(string, string, int) {
 	parser := take_while1(is_oct_digit)
 	return parser(input)
 }
 
-// Recognizes one of the provided characters.
+// one_of recognizes a character that is in the provided `pattern`.
 pub fn one_of(pattern string) Fn {
 	return fn [pattern] (input string) !(string, string, int) {
 		if input.len == 0 {
@@ -175,7 +175,7 @@ pub fn one_of(pattern string) Fn {
 	}
 }
 
-// Recognizes one character and checks that it satisfies a predicate
+// satisfy recognizes one character and checks that it satisfies a predicate `condition`.
 pub fn satisfy(condition fn (u8) bool) Fn {
 	return fn [condition] (input string) !(string, string, int) {
 		if input.len == 0 {
@@ -189,19 +189,19 @@ pub fn satisfy(condition fn (u8) bool) Fn {
 	}
 }
 
-// Recognizes zero or more spaces and tabs.
+// space0 recognizes zero or more spaces and tabs.
 pub fn space0(input string) !(string, string, int) {
 	parser := take_while(is_space)
 	return parser(input)
 }
 
-// Recognizes one or more spaces and tabs.
+// space1 recognizes one or more spaces and tabs.
 pub fn space1(input string) !(string, string, int) {
 	parser := take_while1(is_space)
 	return parser(input)
 }
 
-// Matches a tab character '\t'.
+// tab matches a tab character '\t'.
 pub fn tab(input string) !(string, string, int) {
 	parser := tag('\t')
 	return parser(input)
